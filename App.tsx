@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -7,10 +7,17 @@ import {
   TouchableOpacity,
   // Image,
 } from 'react-native';
-import Test from './assets/test.svg';
-import { Svg } from 'react-native-svg';
+// import Test from './assets/test.svg';
+// import { Svg } from 'react-native-svg';
+import * as api from './api';
 
 function App() {
+  const [tokens, setTokens] = useState<api.TokensListResponse>();
+
+  useEffect(() => {
+    api.getTokensList().then(setTokens);
+    // setTokens(await api.getTokensList())
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -30,6 +37,13 @@ function App() {
         <View style={styles.tokenComponent}>
           <View style={styles.tokenIcon} />
           <Text>Token B</Text>
+        </View>
+        <View>
+          {tokens?.tokens.map(token => (
+            <Text>
+              {token.symbol} - {token.name}
+            </Text>
+          ))}
         </View>
       </View>
     </SafeAreaView>
