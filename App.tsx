@@ -5,11 +5,13 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
+  ImageBackground,
   // Image,
 } from 'react-native';
 // import Test from './assets/test.svg';
 // import { Svg } from 'react-native-svg';
 import * as api from './api';
+import ModalWrapper from './components/ModalWrapper/ModalWrapper';
 // import ModalWrapper from './components/ModalWrapper/ModalWrapper';
 const defaultToken = {
   address: '',
@@ -20,65 +22,128 @@ const defaultToken = {
   symbol: '',
 };
 
-
 function App() {
-  const [tokens, setTokens] = useState<api.TokensListResponse>({tokens: []});
-  const [currentTokenA, setCurrentTokenA] = useState<api.TokenObject>(tokens?.tokens[0] || {});
-  const [currentTokenB, setCurrentTokenB] = useState<api.TokenObject>(tokens?.tokens[1] || {});
+  const [tokens, setTokens] = useState<api.TokensListResponse>();
+  const [currentTokenA, setCurrentTokenA] = useState<api.TokenObject>();
+  const [currentTokenB, setCurrentTokenB] = useState<api.TokenObject>();
+
+  const [modalAOpen, setModalAOpen] = useState(false);
+  const [modalBOpen, setModalBOpen] = useState(false);
 
   // function ModalWrapper({ children }) {
   //   return <View style={styles.modal}>{children}</View>;
   // }
 
   useEffect(() => {
-    api.getTokensList().then(setTokens).then(() => {
-      console.log(tokens.tokens)
-    });
+    api
+      .getTokensList()
+      .then(setTokens)
+      .then(() => {
+        console.log(tokens?.tokens);
+      });
     // setTokens(await api.getTokensList());
-    console.log(tokens)
+    console.log(tokens);
   }, []);
 
+  useEffect(() => {
+    if (tokens) {
+      setCurrentTokenA(tokens.tokens[0]);
+      setCurrentTokenB(tokens.tokens[1]);
+    }
+  }, [tokens]);
+
   return (
-      <>
-      {/* <View style={styles.modal}>
-        <View style={styles.modalBody}>
-          <View style={styles.selectBlock}>
-            {tokens?.tokens.map((token, i)  => (
-                <TouchableOpacity key={i} style={styles.tokenItem}>
-                  <View style={styles.tokenIcon} />
-                  <View>
-                    <Text>
-                      {token.symbol} - {token.name}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-          </View>
-        </View> 
-        </View> */}
-        <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Choose tokens</Text>
-      <View style={styles.tokensBlock}>
-        <TouchableOpacity style={styles.tokenComponent}>
-          <View style={styles.tokenIcon} />
-          <Text>{currentTokenA?.name}</Text>
-        </TouchableOpacity>
-        <View style={styles.tokensReverse}>
-          <TouchableOpacity style={styles.buttonReverse}>
-            {/* <Svg width={100} height={100}>
+    <>
+      {modalAOpen ? (
+        <ModalWrapper
+          closeModal={() => {
+            setModalAOpen(false);
+          }}>
+          {tokens?.tokens.map((token, i) => (
+            <TouchableOpacity
+              key={i}
+              style={styles.tokenItem}
+              onPress={() => {
+                setCurrentTokenA(token);
+                setModalAOpen(false);
+              }}>
+              <ImageBackground
+                source={{uri: token.logoURI}}
+                style={styles.tokenIcon}
+              />
+              <View>
+                <Text>
+                  {token.symbol} - {token.name}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ModalWrapper>
+      ) : (
+        ''
+      )}
+
+      {modalBOpen ? (
+        <ModalWrapper
+          closeModal={() => {
+            setModalBOpen(false);
+          }}>
+          {tokens?.tokens.map((token, i) => (
+            <TouchableOpacity
+              key={i}
+              style={styles.tokenItem}
+              onPress={() => {
+                setCurrentTokenB(token);
+                setModalBOpen(false);
+              }}>
+              <ImageBackground
+                source={{uri: token.logoURI}}
+                style={styles.tokenIcon}
+              />
+              <View>
+                <Text>
+                  {token.symbol} - {token.name}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ModalWrapper>
+      ) : (
+        ''
+      )}
+
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Choose tokens</Text>
+        <View style={styles.tokensBlock}>
+          <TouchableOpacity
+            style={styles.tokenComponent}
+            onPress={() => setModalAOpen(true)}>
+            <ImageBackground
+              source={{uri: currentTokenA?.logoURI}}
+              style={styles.tokenIcon}
+            />
+            <Text>{currentTokenA?.name}</Text>
+          </TouchableOpacity>
+          <View style={styles.tokensReverse}>
+            <TouchableOpacity style={styles.buttonReverse}>
+              {/* <Svg width={100} height={100}>
               <Test />
             </Svg> */}
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={styles.tokenComponent}
+            onPress={() => setModalBOpen(true)}>
+            <ImageBackground
+              source={{uri: currentTokenB?.logoURI}}
+              style={styles.tokenIcon}
+            />
+            <Text>{currentTokenB?.name}</Text>
           </TouchableOpacity>
+          <View />
         </View>
-        <TouchableOpacity style={styles.tokenComponent}>
-          <View style={styles.tokenIcon} />
-          <Text>{currentTokenB?.name}</Text>
-        </TouchableOpacity>
-          <View></View>
-      </View>
-    </SafeAreaView>
-      </>
-    
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -112,7 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     width: 30,
     height: 30,
-    backgroundColor: 'red',
+    backgroundColor: 'aqua',
     marginRight: 15,
   },
   tokensReverse: {
@@ -124,33 +189,6 @@ const styles = StyleSheet.create({
     // backgroundColor: '#283785',
     width: 35,
     height: 35,
-  },
-  modal: {
-    alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',
-    zIndex: 3,
-    top: 0,
-    left: 0,
-  },
-  selectBlock: {
-    maxHeight: '60%',
-    width: '100%',
-    backgroundColor: 'blue',
-    overflow: 'scroll',
-    paddingHorizontal: 15,
-    marginHorizontal: 'auto',
-  },
-  modalBody: {
-    alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'center',
-    width: '80%',
-    height: '80%',
   },
   tokenItem: {
     display: 'flex',
