@@ -10,23 +10,59 @@ import {
 // import Test from './assets/test.svg';
 // import { Svg } from 'react-native-svg';
 import * as api from './api';
+// import ModalWrapper from './components/ModalWrapper/ModalWrapper';
+const defaultToken = {
+  address: '',
+  chainId: 0,
+  decimals: 0,
+  logoURI: '',
+  name: '',
+  symbol: '',
+};
+
 
 function App() {
-  const [tokens, setTokens] = useState<api.TokensListResponse>();
+  const [tokens, setTokens] = useState<api.TokensListResponse>({tokens: []});
+  const [currentTokenA, setCurrentTokenA] = useState<api.TokenObject>(tokens?.tokens[0] || {});
+  const [currentTokenB, setCurrentTokenB] = useState<api.TokenObject>(tokens?.tokens[1] || {});
+
+  // function ModalWrapper({ children }) {
+  //   return <View style={styles.modal}>{children}</View>;
+  // }
 
   useEffect(() => {
-    api.getTokensList().then(setTokens);
-    // setTokens(await api.getTokensList())
+    api.getTokensList().then(setTokens).then(() => {
+      console.log(tokens.tokens)
+    });
+    // setTokens(await api.getTokensList());
+    console.log(tokens)
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+      <>
+      {/* <View style={styles.modal}>
+        <View style={styles.modalBody}>
+          <View style={styles.selectBlock}>
+            {tokens?.tokens.map((token, i)  => (
+                <TouchableOpacity key={i} style={styles.tokenItem}>
+                  <View style={styles.tokenIcon} />
+                  <View>
+                    <Text>
+                      {token.symbol} - {token.name}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+          </View>
+        </View> 
+        </View> */}
+        <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Choose tokens</Text>
       <View style={styles.tokensBlock}>
-        <View style={styles.tokenComponent}>
+        <TouchableOpacity style={styles.tokenComponent}>
           <View style={styles.tokenIcon} />
-          <Text>Token A</Text>
-        </View>
+          <Text>{currentTokenA?.name}</Text>
+        </TouchableOpacity>
         <View style={styles.tokensReverse}>
           <TouchableOpacity style={styles.buttonReverse}>
             {/* <Svg width={100} height={100}>
@@ -34,19 +70,15 @@ function App() {
             </Svg> */}
           </TouchableOpacity>
         </View>
-        <View style={styles.tokenComponent}>
+        <TouchableOpacity style={styles.tokenComponent}>
           <View style={styles.tokenIcon} />
-          <Text>Token B</Text>
-        </View>
-        <View>
-          {tokens?.tokens.map(token => (
-            <Text>
-              {token.symbol} - {token.name}
-            </Text>
-          ))}
-        </View>
+          <Text>{currentTokenB?.name}</Text>
+        </TouchableOpacity>
+          <View></View>
       </View>
     </SafeAreaView>
+      </>
+    
   );
 }
 
@@ -92,6 +124,39 @@ const styles = StyleSheet.create({
     // backgroundColor: '#283785',
     width: 35,
     height: 35,
+  },
+  modal: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    zIndex: 3,
+    top: 0,
+    left: 0,
+  },
+  selectBlock: {
+    maxHeight: '60%',
+    width: '100%',
+    backgroundColor: 'blue',
+    overflow: 'scroll',
+    paddingHorizontal: 15,
+    marginHorizontal: 'auto',
+  },
+  modalBody: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    width: '80%',
+    height: '80%',
+  },
+  tokenItem: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginVertical: 8,
   },
 });
 
