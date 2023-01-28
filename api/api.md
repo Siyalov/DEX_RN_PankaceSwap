@@ -1,3 +1,5 @@
+https://aptos.pancakeswap.finance/swap
+
 1x ceUSDC
 
 0.05485146x APT

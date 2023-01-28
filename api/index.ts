@@ -26,7 +26,7 @@ export interface TokensListResponse {
   tokens: Array<TokenObject>;
 }
 
-export interface CurrentPriceResponse {
+interface CurrentPriceResponse {
   type: string;
   data: {
     /** `new Date(Number(block_timestamp_last) * 1000)` */
@@ -38,26 +38,55 @@ export interface CurrentPriceResponse {
   };
 }
 
+export interface ExchangePrice {
+  a_to_b: number;
+  b_to_a: number;
+  a: TokenObject;
+  b: TokenObject;
+  date: Date;
+}
+
 export async function getTokensList() {
   const response = await fetch(tokensListURL);
   const data: TokensListResponse = await response.json();
   return data;
 }
 
-export async function getCurrentPrice(a: TokenObject, b: TokenObject) {
+export async function getCurrentPrice(
+  a: TokenObject,
+  b: TokenObject,
+): Promise<ExchangePrice> {
   const response = await fetch(
     currentPriceURL.split('$$A').join(a.address).split('$$B').join(b.address),
+    {
+      headers: {
+        origin: 'https://aptos.pancakeswap.finance',
+        referer: 'https://aptos.pancakeswap.finance/',
+      },
+    },
   );
-  const data: CurrentPriceResponse = await response.json();
-  const x = Number(data.data.reserve_x);
-  const y = Number(data.data.reserve_y);
-  const date = new Date(Number(data.data.block_timestamp_last) * 1000);
+  console.log('exchangePrice', response.status, a.symbol, b.symbol);
+  if (response.ok) {
+    const data: CurrentPriceResponse = await response.json();
+    console.log(response.status, data);
+    const x = Number(data.data.reserve_x);
+    const y = Number(data.data.reserve_y);
+    const date = new Date(Number(data.data.block_timestamp_last) * 1000);
 
-  return {
-    a_to_b: x / y / 100,
-    b_to_a: 1 / (x / y / 100),
-    a,
-    b,
-    date,
-  };
+    return {
+      a_to_b: x / y / 100,
+      b_to_a: 1 / (x / y / 100),
+      a,
+      b,
+      date,
+    };
+  } else {
+    return {
+      a,
+      b,
+      date: new Date(),
+      a_to_b: 0,
+      b_to_a: 0,
+    };
+  }
 }

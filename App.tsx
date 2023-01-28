@@ -13,14 +13,6 @@ import {
 import * as api from './api';
 import ModalWrapper from './components/ModalWrapper/ModalWrapper';
 // import ModalWrapper from './components/ModalWrapper/ModalWrapper';
-const defaultToken = {
-  address: '',
-  chainId: 0,
-  decimals: 0,
-  logoURI: '',
-  name: '',
-  symbol: '',
-};
 
 function App() {
   const [tokens, setTokens] = useState<api.TokensListResponse>();
@@ -29,6 +21,8 @@ function App() {
 
   const [modalAOpen, setModalAOpen] = useState(false);
   const [modalBOpen, setModalBOpen] = useState(false);
+
+  const [exchangePrice, setExchangePrice] = useState<api.ExchangePrice>();
 
   // function ModalWrapper({ children }) {
   //   return <View style={styles.modal}>{children}</View>;
@@ -52,6 +46,13 @@ function App() {
     }
   }, [tokens]);
 
+  useEffect(() => {
+    if (currentTokenA && currentTokenB) {
+      setExchangePrice(undefined);
+      api.getCurrentPrice(currentTokenA, currentTokenB).then(setExchangePrice);
+    }
+  }, [currentTokenA, currentTokenB]);
+
   return (
     <>
       {modalAOpen ? (
@@ -68,7 +69,7 @@ function App() {
                 setModalAOpen(false);
               }}>
               <ImageBackground
-                source={{uri: token.logoURI}}
+                source={{uri: token.logoURI || ''}}
                 style={styles.tokenIcon}
               />
               <View>
@@ -124,6 +125,7 @@ function App() {
             />
             <Text>{currentTokenA?.name}</Text>
           </TouchableOpacity>
+
           <View style={styles.tokensReverse}>
             <TouchableOpacity style={styles.buttonReverse}>
               {/* <Svg width={100} height={100}>
@@ -131,6 +133,7 @@ function App() {
             </Svg> */}
             </TouchableOpacity>
           </View>
+
           <TouchableOpacity
             style={styles.tokenComponent}
             onPress={() => setModalBOpen(true)}>
@@ -140,7 +143,12 @@ function App() {
             />
             <Text>{currentTokenB?.name}</Text>
           </TouchableOpacity>
-          <View />
+
+          <View>
+            <Text style={{color: '#ffaa00'}}>
+              {exchangePrice?.a_to_b.toFixed(currentTokenA?.decimals)}
+            </Text>
+          </View>
         </View>
       </SafeAreaView>
     </>
