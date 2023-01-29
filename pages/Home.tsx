@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   ImageBackground,
   SafeAreaView,
@@ -8,25 +8,17 @@ import {
   View,
 } from 'react-native';
 import * as api from '../api';
+import {Context} from '../App';
 import ModalWrapper from '../components/ModalWrapper';
 import WatchButton from '../components/WatchButton';
 
 export default function () {
   const [tokens, setTokens] = useState<api.TokensListResponse>();
-  const [currentTokenA, setCurrentTokenA] = useState<api.TokenObject>();
-  const [currentTokenB, setCurrentTokenB] = useState<api.TokenObject>();
+  const {currentTokenA, currentTokenB, setCurrentTokenA, setCurrentTokenB} =
+    useContext(Context);
 
   const [modalAOpen, setModalAOpen] = useState(false);
   const [modalBOpen, setModalBOpen] = useState(false);
-
-  // const [countTokenA, setCountTokenA] = useState<number>(0);
-  // const [countTokenB, setCountTokenB] = useState<number>(0);
-
-  const [exchangePrice, setExchangePrice] = useState<api.ExchangePrice>();
-
-  // function ModalWrapper({ children }) {
-  //   return <View style={styles.modal}>{children}</View>;
-  // }
 
   useEffect(() => {
     api.getTokensList().then(setTokens);
@@ -39,13 +31,6 @@ export default function () {
       setCurrentTokenB(tokens.tokens[1]);
     }
   }, [tokens]);
-
-  useEffect(() => {
-    if (currentTokenA && currentTokenB) {
-      setExchangePrice(undefined);
-      api.getCurrentPrice(currentTokenA, currentTokenB).then(setExchangePrice);
-    }
-  }, [currentTokenA, currentTokenB]);
 
   return (
     <>
@@ -137,12 +122,6 @@ export default function () {
             />
             <Text>{currentTokenB?.name}</Text>
           </TouchableOpacity>
-
-          <View>
-            <Text style={{color: '#ffaa00'}}>
-              {exchangePrice?.a_to_b.toFixed(currentTokenA?.decimals)}
-            </Text>
-          </View>
         </View>
         <WatchButton onModal={() => {}} />
       </SafeAreaView>
