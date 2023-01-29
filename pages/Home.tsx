@@ -13,17 +13,17 @@ import ModalWrapper from '../components/ModalWrapper';
 import WatchButton from '../components/WatchButton';
 
 export default function () {
-  const [tokens, setTokens] = useState<api.TokensListResponse>();
-  const {currentTokenA, currentTokenB, setCurrentTokenA, setCurrentTokenB} =
-    useContext(Context);
+  const {
+    currentTokenA,
+    currentTokenB,
+    setCurrentTokenA,
+    setCurrentTokenB,
+    tokens,
+    setTokens,
+  } = useContext(Context);
 
   const [modalAOpen, setModalAOpen] = useState(false);
   const [modalBOpen, setModalBOpen] = useState(false);
-
-  useEffect(() => {
-    api.getTokensList().then(setTokens);
-    // setTokens(await api.getTokensList())
-  }, []);
 
   useEffect(() => {
     if (tokens) {
@@ -93,36 +93,39 @@ export default function () {
       )}
 
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Choose tokens</Text>
-        <View style={styles.tokensBlock}>
-          <TouchableOpacity
-            style={styles.tokenComponent}
-            onPress={() => setModalAOpen(true)}>
-            <ImageBackground
-              source={{uri: currentTokenA?.logoURI}}
-              style={styles.tokenIcon}
-            />
-            <Text>{currentTokenA?.name}</Text>
-          </TouchableOpacity>
+        <View style={styles.homeContent}>
+          <Text style={styles.title}>Choose tokens</Text>
+          <View style={styles.tokensBlock}>
+            <TouchableOpacity
+              style={styles.tokenComponent}
+              onPress={() => setModalAOpen(true)}>
+              <ImageBackground
+                source={{uri: currentTokenA?.logoURI}}
+                style={styles.tokenIcon}
+              />
+              <Text>{currentTokenA?.name}</Text>
+            </TouchableOpacity>
 
-          <View style={styles.tokensReverse}>
-            <TouchableOpacity style={styles.buttonReverse}>
-              {/* <Svg width={100} height={100}>
+            <View style={styles.tokensReverse}>
+              <TouchableOpacity style={styles.buttonReverse}>
+                {/* <Svg width={100} height={100}>
               <Test />
             </Svg> */}
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.tokenComponent}
+              onPress={() => setModalBOpen(true)}>
+              <ImageBackground
+                source={{uri: currentTokenB?.logoURI}}
+                style={styles.tokenIcon}
+              />
+              <Text>{currentTokenB?.name}</Text>
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            style={styles.tokenComponent}
-            onPress={() => setModalBOpen(true)}>
-            <ImageBackground
-              source={{uri: currentTokenB?.logoURI}}
-              style={styles.tokenIcon}
-            />
-            <Text>{currentTokenB?.name}</Text>
-          </TouchableOpacity>
         </View>
+
         <WatchButton onModal={() => {}} />
       </SafeAreaView>
     </>
@@ -177,5 +180,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     marginVertical: 8,
+  },
+  homeContent: {
+    flex: 1,
   },
 });
