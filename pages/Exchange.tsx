@@ -4,32 +4,54 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View, 
+  View,
 } from 'react-native';
 import {Context} from '../App';
 import * as api from '../api';
 import WatchButton from '../components/WatchButton';
-import { TextInput } from 'react-native';
-
+import {TextInput} from 'react-native';
 
 export default function Exchange() {
   const {currentTokenA, currentTokenB} = useContext(Context);
   const [exchangePrice, setExchangePrice] = useState<api.ExchangePrice>();
+  const [valueA, setValueA] = useState('1');
+  const [valueB, setValueB] = useState('0');
 
   useEffect(() => {
     if (currentTokenA && currentTokenB) {
       setExchangePrice(undefined);
       api.getCurrentPrice(currentTokenA, currentTokenB).then(setExchangePrice);
+
+      setValueB(
+        (Number(valueA) * (exchangePrice?.a_to_b || 0)).toFixed(
+          currentTokenA?.decimals,
+        ),
+      );
     }
   }, [currentTokenA, currentTokenB]);
 
+  function onSetValueA(value: string) {
+    setValueA(value);
+    setValueB(
+      (Number(value) * (exchangePrice?.a_to_b || 0)).toFixed(
+        currentTokenA?.decimals,
+      ),
+    );
+  }
+  function onSetValueB(value: string) {
+    setValueB(value);
+    setValueA(
+      (Number(value) * (exchangePrice?.b_to_a || 0)).toFixed(
+        currentTokenB?.decimals,
+      ),
+    );
+  }
+
   return (
     <>
-      <Text>{exchangePrice?.a_to_b.toFixed(currentTokenA?.decimals)}</Text>
       <SafeAreaView style={styles.container}>
         <View style={styles.homeContent}>
-          <Text style={styles.title}>Choose tokens</Text>
+          <Text style={styles.title}>Exchange tokens</Text>
           <View style={styles.tokensBlock}>
             <View style={styles.tokenWrapper}>
               <View style={styles.tokenTitle}>
@@ -37,13 +59,20 @@ export default function Exchange() {
                   source={{uri: currentTokenA?.logoURI}}
                   style={styles.tokenIcon}
                 />
-                <View> 
-                <Text style={styles.tokenSymbol}>{currentTokenA?.symbol}</Text>
-                <Text style={styles.tokenName}>{currentTokenA?.name}</Text>
-                </View>                                
+                <View>
+                  <Text style={styles.tokenSymbol}>
+                    {currentTokenA?.symbol}
+                  </Text>
+                  <Text style={styles.tokenName}>{currentTokenA?.name}</Text>
+                </View>
               </View>
               <View style={styles.tokenComponent}>
-                <TextInput onChangeText={() => {}} value={'UDUUD'}></TextInput>
+                <TextInput
+                  style={styles.textInput}
+                  keyboardType="numeric"
+                  onChangeText={onSetValueA}
+                  value={valueA}
+                />
               </View>
             </View>
             <View style={styles.tokenWrapper}>
@@ -52,15 +81,33 @@ export default function Exchange() {
                   source={{uri: currentTokenB?.logoURI}}
                   style={styles.tokenIcon}
                 />
-                <Text>{currentTokenB?.name}</Text>
+                <View>
+                  <Text style={styles.tokenSymbol}>
+                    {currentTokenB?.symbol}
+                  </Text>
+                  <Text style={styles.tokenName}>{currentTokenB?.name}</Text>
+                </View>
               </View>
               <View style={styles.tokenComponent}>
-                <TextInput onChangeText={() => {}} value={'TRT'}></TextInput>
+                <TextInput
+                  style={styles.textInput}
+                  keyboardType="numeric"
+                  onChangeText={onSetValueB}
+                  value={valueB}
+                />
+              </View>
+              <View style={styles.tokenExchange}>
+                <Text style={styles.tokenName}>
+                  {currentTokenA?.symbol} ={' '}
+                  {(exchangePrice?.a_to_b || 0).toFixed(
+                    currentTokenA?.decimals,
+                  )}{' '}
+                  {currentTokenB?.symbol}
+                </Text>
               </View>
             </View>
           </View>
         </View>
-        <WatchButton onModal={() => {}} />
       </SafeAreaView>
     </>
   );
@@ -97,7 +144,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   tokenTitle: {
-    flexDirection:'row',
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -114,7 +161,6 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   buttonReverse: {
-    // backgroundColor: '#283785',
     width: 35,
     height: 35,
   },
@@ -129,11 +175,16 @@ const styles = StyleSheet.create({
   },
   tokenSymbol: {
     color: 'white',
-    fontWeight: 700,
-
+    fontWeight: '700',
   },
   tokenName: {
-    color: 'white',    
-  
+    color: 'white',
+  },
+  textInput: {
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  tokenExchange: {
+    padding: 10,
   },
 });
