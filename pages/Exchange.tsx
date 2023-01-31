@@ -6,12 +6,12 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Context} from '../App';
+import {Context} from '../contexts/appContext';
 import * as api from '../api';
-import WatchButton from '../components/WatchButton';
 import {TextInput} from 'react-native';
+import {Props} from '../navigation/types';
 
-export default function Exchange() {
+export default function Exchange({}: Props<'Exchange'>) {
   const {currentTokenA, currentTokenB} = useContext(Context);
   const [exchangePrice, setExchangePrice] = useState<api.ExchangePrice>();
   const [valueA, setValueA] = useState('1');
@@ -20,14 +20,16 @@ export default function Exchange() {
   useEffect(() => {
     if (currentTokenA && currentTokenB) {
       setExchangePrice(undefined);
-      api.getCurrentPrice(currentTokenA, currentTokenB).then(setExchangePrice);
-
-      setValueB(
-        (Number(valueA) * (exchangePrice?.a_to_b || 0)).toFixed(
-          currentTokenA?.decimals,
-        ),
-      );
+      api.getCurrentPrice(currentTokenA, currentTokenB).then(price => {
+        setExchangePrice(price);
+        setValueB(
+          (Number(valueA) * (price?.a_to_b || 0)).toFixed(
+            currentTokenA?.decimals,
+          ),
+        );
+      });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTokenA, currentTokenB]);
 
   function onSetValueA(value: string) {

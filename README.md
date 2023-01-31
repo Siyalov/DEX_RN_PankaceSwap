@@ -1,5 +1,10 @@
 ## Используемые технологии:
 * [React Native](https://reactnative.dev/)
+* [React Navigation](https://reactnavigation.org/)
+* [TypeScript](https://www.typescriptlang.org/)
+
+### Preview
+![Preview](doc/screenshot.png)
 
 ### First screen layout
 ![FirstScreen](doc/Screenshot_8.png)

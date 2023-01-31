@@ -7,19 +7,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as api from '../api';
-import {Context} from '../App';
+import {Context} from '../contexts/appContext';
 import ModalWrapper from '../components/ModalWrapper';
 import WatchButton from '../components/WatchButton';
+import {Props} from '../navigation/types';
 
-export default function () {
+export default function ({navigation}: Props<'Home'>) {
   const {
     currentTokenA,
     currentTokenB,
     setCurrentTokenA,
     setCurrentTokenB,
     tokens,
-    setTokens,
   } = useContext(Context);
 
   const [modalAOpen, setModalAOpen] = useState(false);
@@ -30,6 +29,7 @@ export default function () {
       setCurrentTokenA(tokens.tokens[0]);
       setCurrentTokenB(tokens.tokens[1]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokens]);
 
   return (
@@ -99,10 +99,14 @@ export default function () {
             <TouchableOpacity
               style={styles.tokenComponent}
               onPress={() => setModalAOpen(true)}>
-              <ImageBackground
-                source={{uri: currentTokenA?.logoURI}}
-                style={styles.tokenIcon}
-              />
+              {currentTokenA ? (
+                <ImageBackground
+                  source={{uri: currentTokenA?.logoURI}}
+                  style={styles.tokenIcon}
+                />
+              ) : (
+                ''
+              )}
               <Text>{currentTokenA?.name}</Text>
             </TouchableOpacity>
 
@@ -117,16 +121,24 @@ export default function () {
             <TouchableOpacity
               style={styles.tokenComponent}
               onPress={() => setModalBOpen(true)}>
-              <ImageBackground
-                source={{uri: currentTokenB?.logoURI}}
-                style={styles.tokenIcon}
-              />
+              {currentTokenB ? (
+                <ImageBackground
+                  source={{uri: currentTokenB?.logoURI}}
+                  style={styles.tokenIcon}
+                />
+              ) : (
+                ''
+              )}
               <Text>{currentTokenB?.name}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <WatchButton onModal={() => {}} />
+        <WatchButton
+          onModal={() => {
+            navigation.navigate('Exchange');
+          }}
+        />
       </SafeAreaView>
     </>
   );

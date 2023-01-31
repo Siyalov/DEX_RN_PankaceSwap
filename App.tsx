@@ -1,25 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import Home from './pages/Home';
 import * as api from './api';
+import {Context} from './contexts/appContext';
+
+import Home from './pages/Home';
 import Exchange from './pages/Exchange';
-// import ModalWrapper from './components/ModalWrapper/ModalWrapper';
 
-export interface AppContext {
-  currentTokenA?: api.TokenObject;
-  setCurrentTokenA: React.Dispatch<
-    React.SetStateAction<api.TokenObject | undefined>
-  >;
-  tokens?: api.TokensListResponse;
-  setTokens: React.Dispatch<
-    React.SetStateAction<api.TokensListResponse | undefined>
-  >;
-  currentTokenB?: api.TokenObject;
-  setCurrentTokenB: React.Dispatch<
-    React.SetStateAction<api.TokenObject | undefined>
-  >;
-}
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {RootStackParamList} from './navigation/types';
 
-export const Context = React.createContext<AppContext>({} as AppContext);
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [tokens, setTokens] = useState<api.TokensListResponse>();
@@ -41,8 +31,26 @@ export default function App() {
         tokens,
         setTokens,
       }}>
-      <Exchange />
-      <Home />
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerMode: 'screen',
+            headerTintColor: 'white',
+            headerStyle: {backgroundColor: '#330746'},
+            headerShadowVisible: false,
+          }}>
+          <Stack.Screen
+            name="Home"
+            options={{title: 'Choose'}}
+            component={Home}
+          />
+          <Stack.Screen
+            name="Exchange"
+            options={{title: 'Exchange'}}
+            component={Exchange}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </Context.Provider>
   );
 }
