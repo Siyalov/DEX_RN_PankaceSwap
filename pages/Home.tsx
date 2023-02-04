@@ -11,6 +11,7 @@ import {Context} from '../contexts/appContext';
 import ModalWrapper from '../components/ModalWrapper';
 import WatchButton from '../components/WatchButton';
 import {Props} from '../navigation/types';
+import Svg from '../assets/up_down.svg';
 
 export default function ({navigation}: Props<'Home'>) {
   const {
@@ -31,6 +32,13 @@ export default function ({navigation}: Props<'Home'>) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokens]);
+
+  function swapTokens() {
+    const valueA = currentTokenA;
+    const valueB = currentTokenB;
+    setCurrentTokenA(valueB);
+    setCurrentTokenB(valueA);
+  }
 
   return (
     <>
@@ -111,10 +119,10 @@ export default function ({navigation}: Props<'Home'>) {
             </TouchableOpacity>
 
             <View style={styles.tokensReverse}>
-              <TouchableOpacity style={styles.buttonReverse}>
-                {/* <Svg width={100} height={100}>
-              <Test />
-            </Svg> */}
+              <TouchableOpacity
+                style={styles.buttonReverse}
+                onPress={swapTokens}>
+                <Svg width={34} height={34} />
               </TouchableOpacity>
             </View>
 
@@ -181,11 +189,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     marginVertical: 15,
+    alignItems: 'center',
   },
   buttonReverse: {
-    // backgroundColor: '#283785',
-    width: 35,
-    height: 35,
+    backgroundColor: 'lightgrey',
+    width: 34,
+    height: 34,
+    borderRadius: 16,
   },
   tokenItem: {
     display: 'flex',
