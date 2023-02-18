@@ -1,3 +1,5 @@
+## Тестовое задание:  https://docs.google.com/document/d/1UaHt1ZS6cadtI5MswhqMVTeiQHiC2irvMYDPOxk3xdQ/edit?usp=sharing 
+
 ## Используемые технологии:
 * [React Native](https://reactnative.dev/)
 * [React Navigation](https://reactnavigation.org/)
