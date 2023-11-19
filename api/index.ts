@@ -1,6 +1,6 @@
-const tokensListURL =
+export const tokensListURL =
   'https://tokens.pancakeswap.finance/pancakeswap-aptos.json';
-const currentPriceURL =
+export const currentPriceURL =
   'https://aptos-mainnet.nodereal.io/v1/26d2212e5f644521991bb22e8a4a5c5b/v1/accounts/0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa/resource/0xc7efb4076dbe143cbcd98cfaaa929ecfc8f299203dfff63b95ccb6bfe19850fa::swap::TokenPairReserve<$$A, $$B>';
 
 export interface TokenObject {
