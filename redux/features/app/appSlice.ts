@@ -10,7 +10,7 @@ type AppSliceState = {
 };
 
 const initialState: AppSliceState = {};
-export const getTokensList = createAsyncThunk('tokens/get', async() => {
+export const getTokensList = createAsyncThunk('tokens/get', async () => {
   const response = await fetch(api.tokensListURL);
   const data: api.TokensListResponse = await response.json();
   return data;
@@ -29,8 +29,8 @@ export const appSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(getTokensList.fulfilled, (state, action) => {
       state.tokens = action.payload
-    } )
-  }; 
+    });
+  },
 });
 
 export const {setCurrentTokenA, setCurrentTokenB} = appSlice.actions;

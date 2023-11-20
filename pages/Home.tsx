@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, {useContext, useEffect, useState} from 'react';
 import {
   ImageBackground,
@@ -12,23 +13,33 @@ import ModalWrapper from '../components/ModalWrapper';
 import WatchButton from '../components/WatchButton';
 import {Props} from '../navigation/types';
 import Svg from '../assets/up_down.svg';
+import {useAppDispatch, useAppSelector} from '../redux/hook';
+import {
+  setCurrentTokenA,
+  setCurrentTokenB,
+} from '../redux/features/app/appSlice';
 
 export default function ({navigation}: Props<'Home'>) {
   const {
-    currentTokenA,
-    currentTokenB,
-    setCurrentTokenA,
-    setCurrentTokenB,
-    tokens,
+    // currentTokenA,
+    // currentTokenB,
+    // setCurrentTokenA,
+    // setCurrentTokenB,
+    // tokens,
+    
   } = useContext(Context);
-
+  const {currentTokenA, currentTokenB, tokens} = useAppSelector(state => state.app)
+  const dispatch = useAppDispatch();
   const [modalAOpen, setModalAOpen] = useState(false);
   const [modalBOpen, setModalBOpen] = useState(false);
 
   useEffect(() => {
     if (tokens) {
-      setCurrentTokenA(tokens.tokens[0]);
-      setCurrentTokenB(tokens.tokens[1]);
+      dispatch(setCurrentTokenA(tokens.tokens[0]));
+      dispatch(setCurrentTokenB(tokens.tokens[1]));
+
+      // setCurrentTokenA(tokens.tokens[0]);
+      // setCurrentTokenB(tokens.tokens[1]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokens]);
@@ -36,8 +47,12 @@ export default function ({navigation}: Props<'Home'>) {
   function swapTokens() {
     const valueA = currentTokenA;
     const valueB = currentTokenB;
-    setCurrentTokenA(valueB);
-    setCurrentTokenB(valueA);
+    // setCurrentTokenA(valueB);
+    // setCurrentTokenB(valueA);
+    if (valueA !== undefined && valueB !== undefined) {
+      dispatch(setCurrentTokenA(valueB));
+      dispatch(setCurrentTokenB(valueA));
+    }
   }
 
   return (

@@ -23,6 +23,7 @@ export default function Root() {
   useEffect(() => {
     api.getTokensList().then(setTokens);
     dispatch(getTokensList()); // setTokens(await api.getTokensList())
+    console.log(tokens);
     console.log(app.tokens);
   }, []);
 
