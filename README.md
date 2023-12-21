@@ -4,6 +4,7 @@
 * [React Native](https://reactnative.dev/)
 * [React Navigation](https://reactnavigation.org/)
 * [TypeScript](https://www.typescriptlang.org/)
+* [Redux](https://redux.js.org/)
 
 ### Preview
 ![Preview](doc/screenshot.png)
